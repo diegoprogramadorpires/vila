@@ -9,6 +9,10 @@ import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UsersService {
+  findByEmail //     `User '${newUser.name}' already registered`,
+    (email: string) {
+    return true
+  }
 
   // constructor(
   //   @InjectRepository(UserEntity)

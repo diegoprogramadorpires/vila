@@ -1,24 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+    Controller,
+    HttpCode,
+    HttpStatus,
+    Post,
+    Request,
+    UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthResponseDto } from './dto/auth.dto';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { AuthRequest } from './models/AuthRequest';
+import { IsPublic } from './decorators/is-public.decorator';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+    constructor(private readonly authService: AuthService) { }
 
-  @Post('login')
-  signIn(@Body() authBoby: AuthResponseDto) {
-    return this.authService.signIn(authBoby);
-  }
-
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
+    @IsPublic()
+    @UseGuards(LocalAuthGuard)
+    @Post('login')
+    @HttpCode(HttpStatus.OK)
+    async login(@Request() req: AuthRequest) {
+        return this.authService.login(req.user);
+    }
 }
