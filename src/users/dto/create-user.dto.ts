@@ -1,4 +1,4 @@
-import { User } from '../entities/user.entity';
+import { Users } from '../entities/user.entity';
 import {
     IsEmail,
     IsString,
@@ -94,8 +94,7 @@ export function IsCPF(validationOptions?: ValidationOptions) {
     };
 }
 
-// Classe DTO para criar usuário com validação de CPF
-export class CreateUserDto extends User {
+export class CreateUserDto extends Users {
     @IsEmail()
     email: string;
 

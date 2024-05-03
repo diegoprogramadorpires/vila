@@ -4,43 +4,38 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hashSync as bcryptHashSync } from 'bcrypt';
-import { CreateUserResponse } from './entities/user.entity';
+import { Users } from './entities/user.entity';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UsersService {
-  findByEmail //     `User '${newUser.name}' already registered`,
-    (email: string) {
-    return true
-  }
+  constructor(
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
+  ) { }
 
-  // constructor(
-  //   @InjectRepository(UserEntity)
-  //   private usersRepository: Repository<UserEntity>,
-  // ) { }
-  private users: CreateUserDto[] = [];
+  async create(newUser: CreateUserDto): Promise<Users> {
+    const userAlreadyRegistered = await this.findByUserName(newUser.cpf);
 
-  async create(newUser: CreateUserDto): Promise<any> {
-    const user = {
+    if (userAlreadyRegistered) {
+      throw new ConflictException(`User '${newUser.name}' already registered`);
+    }
+
+    const user = this.usersRepository.create({
       ...newUser,
       id: uuid(),
-      password: bcryptHashSync(newUser.password, 10)
-    }
-    this.users.push(user);
-    // const userAlreadyRegistered = await this.findByUserName(newUser.username);
+      password: bcryptHashSync(newUser.password, 10),
+    });
 
-    // if (userAlreadyRegistered) {
-    //   throw new ConflictException(
-    //     `User '${newUser.name}' already registered`,
-    //   );
-    // }
+    return this.usersRepository.save(user);
+  }
 
-    // const dbUser = new UserEntity();
-    // dbUser.username = newUser.username;
-    // dbUser.passwordHash = bcryptHashSync(newUser.password, 10);
+  async findByUserName(cpf: string): Promise<Users> {
+    return this.usersRepository.findOne({ where: { cpf } });
+  }
 
-    // const { id, username } = await this.usersRepository.save(dbUser);
-    return this.users;
+  async findByEmail(email: string): Promise<Users> {
+    return this.usersRepository.findOne({ where: { email } });
   }
 
   findAll() {

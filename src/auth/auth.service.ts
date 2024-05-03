@@ -5,7 +5,7 @@ import { UnauthorizedError } from './errors/unauthorized.error';
 import { UsersService } from '../users/users.service';
 import { UserPayload } from './models/UserPayload';
 import { UserToken } from './models/UserToken';
-import { User } from 'src/users/entities/user.entity';
+import { Users } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
         private readonly userService: UsersService,
     ) { }
 
-    async login(user: User): Promise<UserToken> {
+    async login(user: Users): Promise<UserToken> {
         const payload: UserPayload = {
             sub: user.id,
             email: user.email,
@@ -26,7 +26,7 @@ export class AuthService {
         };
     }
 
-    async validateUser(email: string, password: string): Promise<User> {
+    async validateUser(email: string, password: string): Promise<Users> {
         const user: any = await this.userService.findByEmail(email);
 
         if (user) {
