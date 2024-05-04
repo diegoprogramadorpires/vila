@@ -21,10 +21,15 @@ export class UsersService {
       throw new ConflictException(`User '${newUser.name}' already registered`);
     }
 
+    const hashedPassword = bcryptHashSync(newUser.password, 10);
+
     const user = this.usersRepository.create({
       ...newUser,
       id: uuid(),
-      password: bcryptHashSync(newUser.password, 10),
+      password: hashedPassword,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true,
     });
 
     return this.usersRepository.save(user);
