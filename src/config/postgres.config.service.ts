@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { UserProfile } from 'src/profile/entities/profile.entity';
+import { RevokedToken } from 'src/revokedtoken/entities/revoked-token.entity';
 import { Users } from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -16,7 +18,7 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
             username: this.configService.get<string>('DB_USERNAME'),
             password: this.configService.get<string>('DB_PASSWORD'),
             database: this.configService.get<string>('DB_NAME'),
-            entities: [Users],
+            entities: [Users, RevokedToken, UserProfile],
             synchronize: true,
         };
     }

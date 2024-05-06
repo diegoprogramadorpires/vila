@@ -8,6 +8,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { PostgresConfigService } from './config/postgres.config.service';
+import { RevokedtokenModule } from './revokedtoken/revokedtoken.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   controllers: [AppController],
@@ -26,7 +28,9 @@ import { PostgresConfigService } from './config/postgres.config.service';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-    })
+    }),
+    RevokedtokenModule,
+    ProfileModule
   ],
 })
 export class AppModule { }

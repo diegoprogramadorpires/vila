@@ -5,20 +5,20 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-// Password
 import { AuthGuard } from '@nestjs/passport';
-// Decorators
 import { IS_PUBLIC_KEY } from '../decorators/is-public.decorator';
-// Error Handling
 import { UnauthorizedError } from '../errors/unauthorized.error';
+import { RevokedTokenService } from 'src/revokedtoken/revokedtoken.service';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-    constructor(private reflector: Reflector) {
+    constructor(private reflector: Reflector,
+        private readonly revokedTokenService: RevokedTokenService,
+    ) {
         super();
     }
 
-    canActivate(context: ExecutionContext): Promise<boolean> | boolean {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
@@ -26,6 +26,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
         if (isPublic) {
             return true;
+        }
+
+        const request = context.switchToHttp().getRequest();
+        const token = request.headers.authorization?.split(' ')[1];
+
+        const isTokenRevoked = await this.revokedTokenService.isTokenRevoked(token);
+
+        if (isTokenRevoked) {
+            throw new UnauthorizedException('Token revoked');
         }
 
         const canActivate = super.canActivate(context);
