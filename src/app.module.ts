@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PostgresConfigService } from './config/postgres.config.service';
 import { RevokedtokenModule } from './revokedtoken/revokedtoken.module';
 import { ProfileModule } from './profile/profile.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   controllers: [AppController],
@@ -30,7 +31,8 @@ import { ProfileModule } from './profile/profile.module';
       envFilePath: '.env',
     }),
     RevokedtokenModule,
-    ProfileModule
+    ProfileModule,
+    MongooseModule.forRoot('mongodb://localhost:27018'),
   ],
 })
 export class AppModule { }
