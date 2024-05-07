@@ -43,5 +43,7 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+# documento para intração continua
 
+https://docs.google.com/document/d/1eGlYWRNVXLnwmVClTLBPCjftDPp3hNRAB4br92axY2c/edit?usp=sharing
 
